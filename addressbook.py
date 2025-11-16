@@ -93,9 +93,10 @@ class Record:
         return False
 
     def edit_phone(self, old_phone, new_phone):
+        new_phone_obj = Phone(new_phone)
         for i, p in enumerate(self.phones):
             if p == old_phone:
-                self.phones[i] = Phone(new_phone)
+                self.phones[i] = new_phone_obj
                 return True
         return False
 
