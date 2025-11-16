@@ -1,4 +1,4 @@
-"""AddressBook module with Contact management classes."""
+
 
 from collections import UserDict
 from datetime import datetime, timedelta
@@ -7,7 +7,6 @@ import config
 
 
 class Field:
-    """Base class for record fields."""
 
     def __init__(self, value):
         self.value = value
@@ -20,7 +19,6 @@ class Field:
 
 
 class Name(Field):
-    """Class for storing contact name."""
 
     @staticmethod
     def validator(name):
@@ -29,7 +27,6 @@ class Name(Field):
 
 
 class Phone(Field):
-    """Class for storing and validating phone number."""
 
     def __init__(self, value):
         if not self.validator(value):
@@ -40,15 +37,7 @@ class Phone(Field):
 
     @staticmethod
     def validator(value):
-        """
-        Validate phone number.
 
-        Args:
-            value: Phone number string
-
-        Returns:
-            bool: True if valid
-        """
         if not isinstance(value, str):
             return False
         return bool(re.match(config.PHONE_FORMAT, value))
@@ -62,7 +51,6 @@ class Phone(Field):
 
 
 class Birthday(Field):
-    """Class for storing and validating birthday date."""
 
     def __init__(self, value):
         if not self.validator(value):
@@ -78,15 +66,7 @@ class Birthday(Field):
 
     @staticmethod
     def validator(value):
-        """
-        Validate birthday date.
 
-        Args:
-            value: Date string in DD.MM.YYYY format
-
-        Returns:
-            bool: True if valid
-        """
         try:
             datetime.strptime(value, config.BIRTHDAY_FORMAT)
             return True
@@ -95,7 +75,6 @@ class Birthday(Field):
 
 
 class Record:
-    """Class for storing contact information."""
 
     def __init__(self, name):
         self.name = Name(name)
@@ -103,12 +82,10 @@ class Record:
         self.birthday = None
 
     def add_phone(self, phone):
-        """Add phone number to contact."""
         phone_obj = Phone(phone)
         self.phones.append(phone_obj)
 
     def remove_phone(self, phone):
-        """Remove phone number from contact."""
         for i, p in enumerate(self.phones):
             if p == phone:
                 self.phones.pop(i)
@@ -116,7 +93,6 @@ class Record:
         return False
 
     def edit_phone(self, old_phone, new_phone):
-        """Edit existing phone number."""
         for i, p in enumerate(self.phones):
             if p == old_phone:
                 self.phones[i] = Phone(new_phone)
@@ -124,14 +100,12 @@ class Record:
         return False
 
     def find_phone(self, phone):
-        """Find phone number in contact."""
         for p in self.phones:
             if p == phone:
                 return p
         return None
 
     def add_birthday(self, birthday):
-        """Add birthday to contact."""
         self.birthday = Birthday(birthday)
 
     def __str__(self):
@@ -143,30 +117,21 @@ class Record:
 
 
 class AddressBook(UserDict):
-    """Class for managing address book of contacts."""
 
     def add_record(self, record):
-        """Add contact record to address book."""
         self.data[record.name.value] = record
 
     def find(self, name):
-        """Find contact by name."""
         return self.data.get(name)
 
     def delete(self, name):
-        """Delete contact from address book."""
         if name in self.data:
             del self.data[name]
             return True
         return False
 
     def get_upcoming_birthdays(self):
-        """
-        Get list of contacts with birthdays in next week.
 
-        Returns:
-            list: List of dicts with 'name' and 'congratulation_date'
-        """
         today = datetime.today().date()
         upcoming_birthdays = []
 
@@ -187,11 +152,10 @@ class AddressBook(UserDict):
             if 0 <= delta_days <= 7:
                 congratulation_date = birthday_this_year
 
-                # Move to Monday if falls on weekend
-                if birthday_this_year.weekday() == 5:  # Saturday
+                if birthday_this_year.weekday() == 5:
                     congratulation_date = (birthday_this_year +
                                            timedelta(days=2))
-                elif birthday_this_year.weekday() == 6:  # Sunday
+                elif birthday_this_year.weekday() == 6:
                     congratulation_date = (birthday_this_year +
                                            timedelta(days=1))
 
@@ -206,7 +170,6 @@ class AddressBook(UserDict):
         return upcoming_birthdays
 
     def all_contacts(self):
-        """Get all contacts as formatted string."""
         if not self.data:
             return "No contacts saved."
 
